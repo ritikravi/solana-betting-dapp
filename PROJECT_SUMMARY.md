@@ -25,6 +25,46 @@ A production-quality MVP of a decentralized betting platform built on Solana Dev
 - ✅ Multiple outcome support (up to 10)
 - ✅ Time-based betting windows
 
+### ✅ Backend API (Node.js/Express/PostgreSQL)
+
+**Location:** `backend/`
+
+**Features Implemented:**
+- ✅ RESTful API with Express.js and TypeScript
+- ✅ PostgreSQL database with Prisma ORM
+- ✅ Event indexing and querying
+- ✅ Bet tracking and user history
+- ✅ Platform-wide statistics
+- ✅ User leaderboards
+- ✅ Transaction indexing from Solana
+- ✅ Rate limiting and security
+- ✅ Docker and docker-compose support
+- ✅ Comprehensive API documentation
+- ✅ Database schema with proper indexes
+- ✅ Error handling and validation
+
+**API Endpoints:**
+```
+Events:
+  GET    /api/events              - List all events
+  GET    /api/events/:id          - Get event details
+  GET    /api/events/:id/stats    - Event statistics
+
+Bets:
+  GET    /api/bets                - List all bets
+  GET    /api/bets/user/:wallet   - User bet history
+  GET    /api/bets/tx/:signature  - Get bet by transaction
+
+Stats:
+  GET    /api/stats/platform      - Platform statistics
+  GET    /api/stats/categories    - Category statistics
+  GET    /api/stats/leaderboard   - Top bettors
+
+Indexer:
+  POST   /api/indexer/sync/:sig   - Index transaction
+  GET    /api/indexer/status      - Indexer status
+```
+
 **Security Features:**
 - Signer validation on all transactions
 - Authority verification for admin actions
