@@ -1,6 +1,15 @@
 # Solana Betting dApp MVP
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Solana](https://img.shields.io/badge/Solana-Devnet-blueviolet)](https://solana.com/)
+[![Anchor](https://img.shields.io/badge/Anchor-0.29.0-purple)](https://www.anchor-lang.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+
 A decentralized betting platform built on Solana Devnet where users can place bets on events, with on-chain settlement and payouts.
+
+![Solana Betting dApp](https://img.shields.io/badge/Status-MVP-success)
+![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen)
 
 ## 🚀 Features
 
