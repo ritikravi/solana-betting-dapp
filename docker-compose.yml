@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: solana-betting-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: solana_betting
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: solana-betting-backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/solana_betting?schema=public
+      PORT: 3001
+      NODE_ENV: production
+      SOLANA_RPC_URL: https://api.devnet.solana.com
+      SOLANA_NETWORK: devnet
+      PROGRAM_ID: ${PROGRAM_ID}
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "npx prisma db push && npm start"
+
+volumes:
+  postgres_data:
+    driver: local

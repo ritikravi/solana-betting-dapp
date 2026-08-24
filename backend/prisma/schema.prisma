@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Platform {
+  id           String   @id @default(cuid())
+  publicKey    String   @unique
+  authority    String
+  totalEvents  Int      @default(0)
+  totalBets    Int      @default(0)
+  totalVolume  BigInt   @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("platforms")
+}
+
+enum EventStatus {
+  CREATED
+  OPEN
+  CLOSED
+  RESOLVED
+  CANCELLED
+}
+
+model Event {
+  id               String      @id @default(cuid())
+  eventId          Int         @unique
+  publicKey        String      @unique
+  authority        String
+  title            String
+  description      String
+  category         String
+  outcomes         String[]
+  outcomePools     BigInt[]
+  status           EventStatus @default(OPEN)
+  startTime        DateTime
+  closeTime        DateTime
+  winningOutcome   Int?
+  totalPool        BigInt      @default(0)
+  totalBets        Int         @default(0)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  
+  bets             Bet[]
+
+  @@index([status])
+  @@index([category])
+  @@index([closeTime])
+  @@map("events")
+}
+
+model Bet {
+  id               String   @id @default(cuid())
+  publicKey        String   @unique
+  bettor           String
+  eventId          Int
+  outcomeIndex     Int
+  amount           BigInt
+  potentialPayout  BigInt
+  claimed          Boolean  @default(false)
+  timestamp        DateTime
+  txSignature      String   @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  event            Event    @relation(fields: [eventId], references: [eventId])
+
+  @@index([bettor])
+  @@index([eventId])
+  @@index([claimed])
+  @@map("bets")
+}
+
+model Transaction {
+  id           String   @id @default(cuid())
+  signature    String   @unique
+  type         String   // 'create_event', 'place_bet', 'close_event', 'resolve_event', 'claim_payout'
+  status       String   // 'pending', 'confirmed', 'failed'
+  blockTime    DateTime?
+  slot         BigInt?
+  fee          BigInt?
+  signer       String
+  metadata     Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([signature])
+  @@index([type])
+  @@index([signer])
+  @@map("transactions")
+}

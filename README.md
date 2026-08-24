@@ -24,16 +24,26 @@ A decentralized betting platform built on Solana Devnet where users can place be
 ## 🏗️ Architecture
 
 ```
-solana-betting-dapp/
-├── frontend/                 # Next.js application
-│   ├── app/                 # App router pages
-│   ├── components/          # React components
-│   ├── lib/                 # Utilities and Solana integration
-│   └── hooks/               # Custom React hooks
-├── program/                 # Solana smart contract
-│   ├── programs/betting/    # Anchor program
-│   └── tests/              # Program tests
-└── docs/                    # Documentation
+┌─────────────────────────────────────────────┐
+│          Frontend (Next.js/TypeScript)       │
+│  Landing | Events | Dashboard | Admin        │
+│         Wallet Adapter | Web3.js             │
+└──────────────────┬──────────────────────────┘
+                   │
+                   ├─────────────┐
+                   │             │
+                   ▼             ▼
+        ┌──────────────┐  ┌──────────────┐
+        │   Solana     │  │   Backend    │
+        │   Devnet     │  │   API        │
+        │              │  │ (Express.js) │
+        │  Smart       │  └──────┬───────┘
+        │  Contract    │         │
+        └──────────────┘         ▼
+                          ┌──────────────┐
+                          │  PostgreSQL  │
+                          │   Database   │
+                          └──────────────┘
 ```
 
 ## 🛠️ Technology Stack
@@ -45,6 +55,13 @@ solana-betting-dapp/
 - shadcn/ui components
 - Solana Wallet Adapter
 - Solana Web3.js
+
+**Backend:**
+- Node.js + Express.js
+- PostgreSQL + Prisma ORM
+- REST API with rate limiting
+- Transaction indexing
+- Docker support
 
 **Smart Contract:**
 - Rust
