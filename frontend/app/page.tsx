@@ -60,7 +60,7 @@ export default function Home() {
               <Zap className="h-12 w-12 text-primary mb-4" />
               <CardTitle>Lightning Fast</CardTitle>
               <CardDescription>
-                Powered by Solana's high-speed network. Place bets and claim payouts instantly.
+                Powered by Solana&apos;s high-speed network. Place bets and claim payouts instantly.
               </CardDescription>
             </CardHeader>
           </Card>
