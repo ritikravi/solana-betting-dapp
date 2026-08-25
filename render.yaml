@@ -2,7 +2,7 @@ services:
   - type: web
     name: solana-betting-backend
     runtime: node
-    buildCommand: cd backend && npm install && npx prisma generate && npm run build
+    buildCommand: cd backend && chmod +x render-build.sh && ./render-build.sh
     startCommand: cd backend && npm start
     rootDir: /
     envVars:
