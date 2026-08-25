@@ -52,8 +52,8 @@ export default function EventsPage() {
           );
           const program = new Program(IDL, new PublicKey(PROGRAM_ID), provider);
           
-          // Fetch all event accounts
-          const eventAccounts = await program.account.Event.all();
+          // Fetch all event accounts (account name is "BettingEvent" in IDL)
+          const eventAccounts = await program.account.bettingEvent.all();
           
           const loadedEvents: EventData[] = eventAccounts.map((account: any) => ({
             eventId: account.account.eventId.toNumber(),
@@ -80,8 +80,8 @@ export default function EventsPage() {
         const provider = new AnchorProvider(connection, wallet as any, { commitment: 'confirmed' });
         const program = new Program(IDL, new PublicKey(PROGRAM_ID), provider);
         
-        // Fetch all event accounts
-        const eventAccounts = await program.account.Event.all();
+        // Fetch all event accounts (account name is "BettingEvent" in IDL)
+        const eventAccounts = await program.account.bettingEvent.all();
         
         const loadedEvents: EventData[] = eventAccounts.map((account: any) => ({
           eventId: account.account.eventId.toNumber(),
