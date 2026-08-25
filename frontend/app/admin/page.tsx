@@ -47,8 +47,8 @@ export default function AdminPage() {
       const program = new Program(IDL, new PublicKey(PROGRAM_ID), provider);
 
       const eventIdBn = new BN(parseInt(eventId));
-      // Add 5 seconds buffer to account for transaction time
-      const startTime = Math.floor(Date.now() / 1000) + 5;
+      // Add 30 seconds buffer to account for transaction time and clock drift
+      const startTime = Math.floor(Date.now() / 1000) + 30;
       const closeTime = startTime + (parseInt(hoursUntilClose) * 3600);
 
       const [platformPda] = PublicKey.findProgramAddressSync(
