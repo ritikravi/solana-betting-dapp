@@ -17,6 +17,7 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({ children })
     []
   );
 
+  // @ts-ignore - React 18 type compatibility
   return (
     <ConnectionProvider endpoint={SOLANA_RPC_URL}>
       <WalletProvider wallets={wallets} autoConnect>
