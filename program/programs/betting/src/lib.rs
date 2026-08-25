@@ -6,7 +6,7 @@ pub mod errors;
 
 use instructions::*;
 
-declare_id!("BET1111111111111111111111111111111111111111");
+declare_id!("G8NhvwpScAqrX3wtc5jhGbPJYxGJh9eoeDBtLtxAxAqD");
 
 #[program]
 pub mod betting {
