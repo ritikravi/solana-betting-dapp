@@ -107,7 +107,16 @@ export default function AdminPage() {
       setError('');
       setSuccess('');
 
-      const provider = new AnchorProvider(connection, wallet as any, {});
+      // Better provider options for Devnet stability
+      const provider = new AnchorProvider(
+        connection, 
+        wallet as any, 
+        { 
+          commitment: 'confirmed',
+          preflightCommitment: 'confirmed',
+          skipPreflight: false
+        }
+      );
       const program = new Program(IDL, new PublicKey(PROGRAM_ID), provider);
 
       const [platformPda] = PublicKey.findProgramAddressSync(
@@ -115,24 +124,63 @@ export default function AdminPage() {
         program.programId
       );
 
-      const tx = await program.methods
-        .initializePlatform()
-        .accounts({
-          platform: platformPda,
-          authority: wallet.publicKey,
-          systemProgram: SystemProgram.programId,
-        })
-        .rpc();
+      // Check if already initialized
+      try {
+        const platformAccount = await program.account.Platform.fetch(platformPda);
+        setError('Platform already initialized!');
+        setLoading(false);
+        return;
+      } catch (e) {
+        // Platform not initialized, proceed
+      }
 
-      setSuccess(`Platform initialized! TX: ${tx.slice(0, 8)}...`);
+      // Retry logic for blockhash issues
+      let retries = 3;
+      let lastError;
+      
+      while (retries > 0) {
+        try {
+          console.log(`Attempt ${4 - retries}/3 to initialize platform...`);
+          
+          const tx = await program.methods
+            .initializePlatform()
+            .accounts({
+              platform: platformPda,
+              authority: wallet.publicKey,
+              systemProgram: SystemProgram.programId,
+            })
+            .rpc({ 
+              skipPreflight: false,
+              commitment: 'confirmed'
+            });
+
+          setSuccess(`Platform initialized! TX: ${tx.slice(0, 8)}...`);
+          console.log('Full transaction:', tx);
+          return; // Success!
+          
+        } catch (err: any) {
+          lastError = err;
+          console.error(`Attempt ${4 - retries} failed:`, err.message);
+          
+          if (err.message?.includes('already in use')) {
+            setError('Platform already initialized');
+            return;
+          }
+          
+          retries--;
+          if (retries > 0) {
+            console.log(`Retrying in 2 seconds... (${retries} attempts left)`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+        }
+      }
+      
+      // All retries failed
+      throw lastError;
 
     } catch (err: any) {
       console.error('Error initializing platform:', err);
-      if (err.message?.includes('already in use')) {
-        setError('Platform already initialized');
-      } else {
-        setError(err.message || 'Failed to initialize platform');
-      }
+      setError(err.message || 'Failed to initialize platform. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -17,9 +17,15 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({ children })
     []
   );
 
+  // Connection config with better settings for Devnet stability
+  const connectionConfig = useMemo(() => ({
+    commitment: 'confirmed' as const,
+    confirmTransactionInitialTimeout: 60000,
+  }), []);
+
   // @ts-ignore - React 18 type compatibility
   return (
-    <ConnectionProvider endpoint={SOLANA_RPC_URL}>
+    <ConnectionProvider endpoint={SOLANA_RPC_URL} config={connectionConfig}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           {children}
