@@ -127,7 +127,7 @@ export default function AdminPage() {
 
       // Check if already initialized
       try {
-        const platformAccount = await program.account.Platform.fetch(platformPda);
+        const platformAccount = await program.account.platform.fetch(platformPda);
         setError('Platform already initialized!');
         setLoading(false);
         return;

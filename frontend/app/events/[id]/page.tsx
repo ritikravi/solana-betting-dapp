@@ -76,7 +76,7 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
       );
 
       // Fetch platform account to get total bets for bet PDA
-      const platformAccount = await program.account.Platform.fetch(platformPda);
+      const platformAccount = await program.account.platform.fetch(platformPda);
       const totalBets = platformAccount.totalBets as BN;
 
       const [betPda] = PublicKey.findProgramAddressSync(
