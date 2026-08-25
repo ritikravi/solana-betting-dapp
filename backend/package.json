@@ -11,6 +11,8 @@
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
+    "db:setup": "node setup-db.js",
+    "postinstall": "prisma generate",
     "test": "jest"
   },
   "keywords": [
