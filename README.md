@@ -11,6 +11,14 @@ A decentralized betting platform built on Solana Devnet where users can place be
 ![Solana Betting dApp](https://img.shields.io/badge/Status-MVP-success)
 ![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen)
 
+## 🌐 Live Deployment
+
+**🚀 Frontend:** [Your Vercel URL - Update after deployment]  
+**📡 Backend API:** https://solana-betting-dapp-1.onrender.com  
+**💾 GitHub Repository:** https://github.com/ritikravi/solana-betting-dapp  
+
+**API Health Check:** https://solana-betting-dapp-1.onrender.com/api/health
+
 ## 🚀 Features
 
 - **Wallet Integration**: Connect with Phantom, Solflare, and Backpack wallets
@@ -99,6 +107,19 @@ Create `frontend/.env.local`:
 NEXT_PUBLIC_SOLANA_NETWORK=devnet
 NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
 NEXT_PUBLIC_PROGRAM_ID=<your_program_id_after_deployment>
+NEXT_PUBLIC_API_URL=https://solana-betting-dapp-1.onrender.com/api
+```
+
+For backend (`backend/.env`):
+
+```env
+DATABASE_URL=<your_postgresql_url>
+NODE_ENV=development
+PORT=3001
+PROGRAM_ID=<your_program_id>
+SOLANA_RPC_URL=https://api.devnet.solana.com
+SOLANA_NETWORK=devnet
+CORS_ORIGIN=http://localhost:3000
 ```
 
 ### 3. Solana Wallet Setup
@@ -124,7 +145,18 @@ anchor deploy
 # Copy the Program ID from output to frontend/.env.local
 ```
 
-### 5. Run Frontend
+### 5. Run Backend (Optional - for local development)
+
+```bash
+cd backend
+npm install
+npx prisma generate
+npm run dev
+```
+
+Backend runs on http://localhost:3001
+
+### 6. Run Frontend
 
 ```bash
 cd frontend
@@ -213,39 +245,83 @@ npm run lint
 ## 📚 Project Structure
 
 ```
-frontend/
-├── app/
-│   ├── page.tsx              # Landing page
-│   ├── events/               # Events listing
-│   ├── events/[id]/         # Event details & betting
-│   ├── dashboard/           # User dashboard
-│   └── admin/               # Admin panel
-├── components/
-│   ├── wallet/              # Wallet connection
-│   ├── betting/             # Betting UI
-│   ├── events/              # Event cards
-│   └── ui/                  # shadcn components
-└── lib/
-    ├── solana/              # Solana integration
-    └── utils.ts             # Utilities
-
-program/
-├── programs/betting/
-│   └── src/
-│       ├── lib.rs           # Program entry
-│       ├── instructions/    # Instruction handlers
-│       └── state/          # Account structures
-└── tests/
-    └── betting.ts          # Program tests
+solana-betting-dapp/
+├── frontend/                 # Next.js frontend
+│   ├── app/
+│   │   ├── page.tsx         # Landing page
+│   │   ├── events/          # Events listing
+│   │   ├── events/[id]/     # Event details & betting
+│   │   ├── dashboard/       # User dashboard
+│   │   └── admin/           # Admin panel
+│   ├── components/
+│   │   ├── wallet/          # Wallet connection
+│   │   └── ui/              # UI components
+│   └── lib/
+│       ├── solana/          # Solana integration
+│       └── api/             # API client
+│
+├── backend/                  # Express.js backend
+│   ├── src/
+│   │   ├── routes/          # API endpoints
+│   │   ├── services/        # Blockchain indexer
+│   │   └── middleware/      # Error handling
+│   └── prisma/
+│       └── schema.prisma    # Database schema
+│
+├── program/                  # Solana smart contract
+│   ├── programs/betting/
+│   │   └── src/
+│   │       ├── lib.rs       # Program entry
+│   │       ├── instructions/# Instruction handlers
+│   │       └── state/       # Account structures
+│   └── tests/
+│       └── betting.ts       # Program tests
+│
+└── docs/                     # Documentation
+    ├── ARCHITECTURE.md
+    ├── DEPLOYMENT_GUIDE.md
+    └── BACKEND_SETUP.md
 ```
+
+## 📡 API Documentation
+
+The backend provides the following REST endpoints:
+
+### Events
+- `GET /api/events` - List all events
+- `GET /api/events/:id` - Get event details
+- `GET /api/events/:id/bets` - Get bets for an event
+
+### Bets
+- `GET /api/bets` - List all bets
+- `GET /api/bets/user/:wallet` - Get user's bets
+
+### Statistics
+- `GET /api/stats/platform` - Platform statistics
+- `GET /api/stats/leaderboard` - Top winners
+
+### Indexer
+- `POST /api/indexer/sync` - Sync blockchain data
+- `GET /api/health` - Health check
+
+## 🚀 Deployment
+
+This project is deployed on:
+- **Frontend:** Vercel (Free tier)
+- **Backend:** Render (Free tier)
+- **Database:** Render PostgreSQL (Free tier)
+
+For detailed deployment instructions, see [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)
 
 ## 🤝 Contributing
 
 This is an MVP for technical evaluation. Contributions welcome for production enhancements.
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
 ## 📄 License
 
-MIT License
+MIT License - see [LICENSE](LICENSE) file for details
 
 ## 🆘 Troubleshooting
 
