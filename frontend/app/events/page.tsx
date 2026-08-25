@@ -42,56 +42,67 @@ export default function EventsPage() {
     try {
       setLoading(true);
       
-      // For MVP, we'll show mock events since we don't have an indexer
-      // In production, you'd fetch from an indexer or scan all event accounts
-      const mockEvents: EventData[] = [
-        {
-          eventId: 1,
-          title: 'India vs Australia',
-          description: 'Cricket World Cup Final - Who will win the championship?',
-          category: 'Sports',
-          outcomes: ['India', 'Australia'],
-          outcomePools: [1500000000, 2000000000],
-          status: { open: {} },
-          startTime: Math.floor(Date.now() / 1000),
-          closeTime: Math.floor(Date.now() / 1000) + 86400,
-          totalPool: 3500000000,
-          totalBets: 35,
-          publicKey: 'mock',
-        },
-        {
-          eventId: 2,
-          title: 'Team Alpha vs Team Beta',
-          description: 'Esports Championship - Finals match',
-          category: 'Esports',
-          outcomes: ['Team Alpha', 'Team Beta'],
-          outcomePools: [800000000, 1200000000],
-          status: { open: {} },
-          startTime: Math.floor(Date.now() / 1000),
-          closeTime: Math.floor(Date.now() / 1000) + 43200,
-          totalPool: 2000000000,
-          totalBets: 20,
-          publicKey: 'mock',
-        },
-        {
-          eventId: 3,
-          title: 'Bitcoin Price Prediction',
-          description: 'Will BTC close above $50k this week?',
-          category: 'Prediction',
-          outcomes: ['Above $50k', 'Below $50k'],
-          outcomePools: [500000000, 300000000],
-          status: { open: {} },
-          startTime: Math.floor(Date.now() / 1000),
-          closeTime: Math.floor(Date.now() / 1000) + 604800,
-          totalPool: 800000000,
-          totalBets: 12,
-          publicKey: 'mock',
-        },
-      ];
-      
-      setEvents(mockEvents);
+      if (!wallet.publicKey) {
+        // If wallet not connected, try to fetch without wallet
+        try {
+          const provider = new AnchorProvider(
+            connection,
+            {} as any,
+            { commitment: 'confirmed' }
+          );
+          const program = new Program(IDL, new PublicKey(PROGRAM_ID), provider);
+          
+          // Fetch all event accounts
+          const eventAccounts = await program.account.Event.all();
+          
+          const loadedEvents: EventData[] = eventAccounts.map((account: any) => ({
+            eventId: account.account.eventId.toNumber(),
+            title: account.account.title,
+            description: account.account.description,
+            category: account.account.category,
+            outcomes: account.account.outcomes,
+            outcomePools: account.account.outcomePools.map((p: any) => p.toNumber()),
+            status: account.account.status,
+            startTime: account.account.startTime.toNumber(),
+            closeTime: account.account.closeTime.toNumber(),
+            totalPool: account.account.outcomePools.reduce((sum: any, p: any) => sum + p.toNumber(), 0),
+            totalBets: account.account.totalBets,
+            publicKey: account.publicKey.toString(),
+          }));
+          
+          setEvents(loadedEvents);
+        } catch (err) {
+          console.error('Error loading events without wallet:', err);
+          setEvents([]);
+        }
+      } else {
+        // Load with wallet
+        const provider = new AnchorProvider(connection, wallet as any, { commitment: 'confirmed' });
+        const program = new Program(IDL, new PublicKey(PROGRAM_ID), provider);
+        
+        // Fetch all event accounts
+        const eventAccounts = await program.account.Event.all();
+        
+        const loadedEvents: EventData[] = eventAccounts.map((account: any) => ({
+          eventId: account.account.eventId.toNumber(),
+          title: account.account.title,
+          description: account.account.description,
+          category: account.account.category,
+          outcomes: account.account.outcomes,
+          outcomePools: account.account.outcomePools.map((p: any) => p.toNumber()),
+          status: account.account.status,
+          startTime: account.account.startTime.toNumber(),
+          closeTime: account.account.closeTime.toNumber(),
+          totalPool: account.account.outcomePools.reduce((sum: any, p: any) => sum + p.toNumber(), 0),
+          totalBets: account.account.totalBets,
+          publicKey: account.publicKey.toString(),
+        }));
+        
+        setEvents(loadedEvents);
+      }
     } catch (error) {
       console.error('Error loading events:', error);
+      setEvents([]);
     } finally {
       setLoading(false);
     }
